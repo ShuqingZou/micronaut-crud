@@ -1,14 +1,27 @@
 name: Micronaut CI/CD
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     types: [closed]
 
 jobs:
+  check-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if PR was merged
+        id: check_merge
+        run: |
+          if [[ "${{ github.event.pull_request.merged }}" == "true" ]]; then
+            echo "PR was merged!"
+            echo "run_ci=true" >> $GITHUB_ENV
+          else
+            echo "PR was closed without merging. Skipping CI."
+            echo "run_ci=false" >> $GITHUB_ENV
+          fi
+
   build:
+    needs: check-merge
+    if: needs.check-merge.outputs.merged == 'true'
     runs-on: ubuntu-latest
 
     services:
