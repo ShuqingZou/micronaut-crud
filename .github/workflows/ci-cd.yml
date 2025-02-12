@@ -50,7 +50,7 @@ jobs:
           DB_NAME: mn_playground
 
       - name: Upload JAR Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: micronaut-app
           path: build/libs/*.jar
