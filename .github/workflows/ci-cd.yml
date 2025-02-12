@@ -1,6 +1,9 @@
 name: Micronaut CI/CD
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     types: [closed]
 
