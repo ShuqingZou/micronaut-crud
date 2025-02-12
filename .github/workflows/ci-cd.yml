@@ -42,7 +42,7 @@ jobs:
         run: |
           for i in {1..30}; do
             echo "Checking MySQL status..."
-            docker logs $(docker ps -q --filter "ancestor=mysql:latest") || true
+            docker logs $(docker ps -q --filter "ancestor=mysql:latest")
             if mysqladmin ping -h 127.0.0.1 --password=password --silent; then
               echo "MySQL is ready!"
               break
