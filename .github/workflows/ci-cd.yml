@@ -1,0 +1,54 @@
+name: Micronaut CI/CD
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  build:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: mn_playground
+          MYSQL_USER: root
+          MYSQL_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h localhost -u root --password=password"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java environment
+        uses: actions/setup-java@v3
+        with:
+            distribution: 'temurin'
+            java-version: '17'
+
+      - name: Grant execute permission for Gradlew
+        run: chmod +x gradlew
+
+      - name: Build and Test Application
+        run: ./gradlew build
+        env:
+          DB_HOST: localhost
+          DB_PORT: 3306
+          DB_USER: root
+          DB_PASSWORD: password
+          DB_NAME: mn_playground
+
+      - name: Upload JAR Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: micronaut-app
+          path: build/libs/*.jar
