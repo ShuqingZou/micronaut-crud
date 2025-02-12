@@ -41,12 +41,14 @@ jobs:
       - name: Wait for MySQL to be ready
         run: |
           for i in {1..30}; do
+            echo "Checking MySQL status..."
+            docker logs $(docker ps -q --filter "ancestor=mysql:latest") || true
             if mysqladmin ping -h 127.0.0.1 --password=password --silent; then
               echo "MySQL is ready!"
               break
             fi
-            echo "⏳ Waiting for MySQL to start..."
-            sleep 2
+            echo "Waiting for MySQL to start..."
+            sleep 5
           done
 
       - name: Ensure MySQL Database Exists
@@ -56,7 +58,7 @@ jobs:
       - name: Build and Test Application
         run: ./gradlew build
         env:
-          DB_HOST: localhost
+          DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_USER: root
           DB_PASSWORD: password
