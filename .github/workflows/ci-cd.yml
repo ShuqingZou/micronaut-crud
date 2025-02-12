@@ -38,19 +38,6 @@ jobs:
       - name: Grant execute permission for Gradlew
         run: chmod +x gradlew
 
-      - name: Wait for MySQL to be ready
-        run: |
-          for i in {1..30}; do
-            echo "Checking MySQL status..."
-            docker logs $(docker ps -q --filter "ancestor=mysql:latest")
-            if mysqladmin ping -h 127.0.0.1 --password=password --silent; then
-              echo "MySQL is ready!"
-              break
-            fi
-            echo "Waiting for MySQL to start..."
-            sleep 5
-          done
-
       - name: Ensure MySQL Database Exists
         run: |
           mysql -h 127.0.0.1 -u root -ppassword -e "CREATE DATABASE IF NOT EXISTS mn_playground;"
