@@ -51,6 +51,10 @@ jobs:
             sleep 2
           done
 
+      - name: Ensure MySQL Database Exists
+        run: |
+          mysql -h 127.0.0.1 -u root -ppassword -e "CREATE DATABASE IF NOT EXISTS mn_playground;"
+
       - name: Build and Test Application
         run: ./gradlew build
         env:
